@@ -4,6 +4,7 @@ const User = require("../models/User");
 
 const router = express.Router();
 
+// ✅ REGISTER
 router.post("/register", async (req, res) => {
   const { firstName, lastName, email, phone, password, role } = req.body;
 
@@ -25,6 +26,23 @@ router.post("/register", async (req, res) => {
     await user.save();
 
     res.send("Registered successfully");
+  } catch (err) {
+    res.send("Error");
+  }
+});
+
+// ✅ LOGIN (paste BELOW register)
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.send("User not found");
+
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.send("Wrong password");
+
+    res.send("Login successful");
   } catch (err) {
     res.send("Error");
   }
